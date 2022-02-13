@@ -13,8 +13,8 @@ class CustomTextFormField extends StatelessWidget {
   /// Used for implementation of name and email text form fields.
   const CustomTextFormField({
     required this.controller,
-    required this.validator,
     required this.onChanged,
+    this.validator,
     this.hintText,
     this.prefixIcon,
     this.prefixWidget,
@@ -77,8 +77,7 @@ class CustomTextFormField extends StatelessWidget {
     );
   }
 
-  InputDecoration _getFormDeco(BuildContext context) =>
-      InputDeco(context).loginDeco(
+  InputDecoration _getFormDeco(BuildContext context) => InputDeco(context).loginDeco(
         hintText: hintText,
         prefixIcon: prefixIcon,
         prefixWidget: prefixWidget,

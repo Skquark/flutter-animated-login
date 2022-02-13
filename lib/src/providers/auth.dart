@@ -18,6 +18,13 @@ class Auth extends ChangeNotifier {
     LoginCallback? onLogin,
     SignupCallback? onSignup,
     ForgotPasswordCallback? onForgotPassword,
+    this.firstName,
+    this.lastName,
+    this.companyName,
+    this.securityQuestion,
+    this.securityAnswer,
+    this.agreeToTerms = false,
+    this.profileType = ProfileType.Personal,
   }) {
     _onLogin = onLogin ?? _defaultLoginFunc;
     _onSignup = onSignup ?? _defaultSignupFunc;
@@ -97,6 +104,14 @@ class Auth extends ChangeNotifier {
   /// Confirm password text in the text controller.
   String? confirmPassword;
 
+  ProfileType profileType = ProfileType.Personal;
+  String? companyName;
+  String? firstName;
+  String? lastName;
+  String? securityQuestion;
+  String? securityAnswer;
+  bool agreeToTerms;
+
   /// Sets the username.
   void setUsername(String? newUsername) => username = newUsername;
 
@@ -107,8 +122,7 @@ class Auth extends ChangeNotifier {
   void setPassword(String? newPassword) => password = newPassword;
 
   /// Sets the confirm password.
-  void setConfirmPassword(String? newConfirmPassword) =>
-      confirmPassword = newConfirmPassword;
+  void setConfirmPassword(String? newConfirmPassword) => confirmPassword = newConfirmPassword;
 
   /// Sets the confirm password.
   void setIsReverse(bool newValue) {

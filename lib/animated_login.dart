@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'src/src_shelf.dart';
+import 'src/widgets/dialogs/animated_dialog.dart';
 
 export 'src/constants/enums/enums_shelf.dart';
 export 'src/models/models_shelf.dart';
@@ -54,14 +55,7 @@ class AnimatedLogin extends StatefulWidget {
     this.onAuthModeChange,
     this.changeLangDefaultOnPressed,
     Key? key,
-  })  : assert(
-            (changeLanguageCallback != null &&
-                    languageOptions.length != 0 &&
-                    selectedLanguage != null) ||
-                (changeLanguageCallback == null &&
-                    languageOptions.length == 0 &&
-                    selectedLanguage == null),
-            """To use change language button, you should provide both callback and language options."""),
+  })  : assert((changeLanguageCallback != null && languageOptions.length != 0 && selectedLanguage != null) || (changeLanguageCallback == null && languageOptions.length == 0 && selectedLanguage == null), """To use change language button, you should provide both callback and language options."""),
         super(key: key);
 
   /// Determines all of the theme related variables for *DESKTOP* view.
@@ -199,13 +193,12 @@ class _AnimatedLoginState extends State<AnimatedLogin> {
           ),
         ),
       ],
-      child: kIsWeb
+      child: true //kIsWeb
           ? _webScaffold(loginTheme.backgroundColor)
           : GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-              child: Scaffold(
-                  backgroundColor: loginTheme.backgroundColor, body: _safeArea),
+              child: Scaffold(backgroundColor: loginTheme.backgroundColor, body: _safeArea),
             ),
     );
   }
@@ -214,8 +207,7 @@ class _AnimatedLoginState extends State<AnimatedLogin> {
         backgroundColor: backgroundColor,
         body: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
-            final bool isLandscape =
-                constraints.maxHeight / constraints.maxWidth < 1.05;
+            final bool isLandscape = constraints.maxHeight / constraints.maxWidth < 1.05;
             context.read<LoginTheme>().setIsLandscape(isLandscape);
             return _safeArea;
           },
@@ -223,29 +215,32 @@ class _AnimatedLoginState extends State<AnimatedLogin> {
       );
 
   Widget get _safeArea => SafeArea(
-        child: _View(
-          formKey: widget.formKey,
-          checkError: widget.checkError,
-          showForgotPassword: widget.showForgotPassword,
-          showChangeActionTitle: widget.showChangeActionTitle,
-          showPasswordVisibility: widget.showPasswordVisibility,
-          nameController: widget.nameController,
-          emailController: widget.emailController,
-          passwordController: widget.passwordController,
-          confirmPasswordController: widget.confirmPasswordController,
-          backgroundImage: widget.backgroundImage,
-          logo: widget.logo,
-          signUpMode: widget.signUpMode,
-          languageOptions: widget.languageOptions,
-          changeLanguageCallback: widget.changeLanguageCallback,
-          changeLangOnPressed: widget.changeLangOnPressed,
-          nameValidator: widget.nameValidator,
-          emailValidator: widget.emailValidator,
-          passwordValidator: widget.passwordValidator,
-          validateName: widget.validateName,
-          validateEmail: widget.validateEmail,
-          validatePassword: widget.validatePassword,
-          changeLangDefaultOnPressed: widget.changeLangDefaultOnPressed,
+        child: SizedBox(
+          width: context.size?.width ?? MediaQuery.of(context).size.width,
+          child: _View(
+            formKey: widget.formKey,
+            checkError: widget.checkError,
+            showForgotPassword: widget.showForgotPassword,
+            showChangeActionTitle: widget.showChangeActionTitle,
+            showPasswordVisibility: widget.showPasswordVisibility,
+            nameController: widget.nameController,
+            emailController: widget.emailController,
+            passwordController: widget.passwordController,
+            confirmPasswordController: widget.confirmPasswordController,
+            backgroundImage: widget.backgroundImage,
+            logo: widget.logo,
+            signUpMode: widget.signUpMode,
+            languageOptions: widget.languageOptions,
+            changeLanguageCallback: widget.changeLanguageCallback,
+            changeLangOnPressed: widget.changeLangOnPressed,
+            nameValidator: widget.nameValidator,
+            emailValidator: widget.emailValidator,
+            passwordValidator: widget.passwordValidator,
+            validateName: widget.validateName,
+            validateEmail: widget.validateEmail,
+            validatePassword: widget.validatePassword,
+            changeLangDefaultOnPressed: widget.changeLangDefaultOnPressed,
+          ),
         ),
       );
 }
@@ -329,8 +324,7 @@ class __ViewState extends State<_View> with SingleTickerProviderStateMixin {
   late Auth auth;
 
   /// The optional custom form key, if not provided will be created locally.
-  late final GlobalKey<FormState> formKey =
-      widget.formKey ?? GlobalKey<FormState>();
+  late final GlobalKey<FormState> formKey = widget.formKey ?? GlobalKey<FormState>();
 
   bool _isLandscape = true;
 
@@ -339,8 +333,7 @@ class __ViewState extends State<_View> with SingleTickerProviderStateMixin {
     super.initState();
     animationController = AnimationController(
       vsync: this,
-      duration: context.read<LoginTheme>().animationDuration ??
-          const Duration(milliseconds: 600),
+      duration: context.read<LoginTheme>().animationDuration ?? const Duration(milliseconds: 600),
     );
   }
 
@@ -366,10 +359,7 @@ class __ViewState extends State<_View> with SingleTickerProviderStateMixin {
           Container(color: loginTheme.backgroundColor),
           _animatedWebWelcome,
           _formPart,
-          if (widget.changeLanguageCallback != null &&
-              loginTexts.language != null &&
-              widget.languageOptions.isNotEmpty)
-            _changeLanguage,
+          if (widget.changeLanguageCallback != null && loginTexts.language != null && widget.languageOptions.isNotEmpty) _changeLanguage,
         ],
       );
 
@@ -385,22 +375,16 @@ class __ViewState extends State<_View> with SingleTickerProviderStateMixin {
               children: _mobileChildren,
             ),
           ),
-          if (widget.changeLanguageCallback != null &&
-              loginTexts.language != null &&
-              widget.languageOptions.isNotEmpty)
-            _changeLanguage,
+          if (widget.changeLanguageCallback != null && loginTexts.language != null && widget.languageOptions.isNotEmpty) _changeLanguage,
         ],
       );
   List<Widget> get _mobileChildren => <Widget>[
         _welcomeAnimationWrapper(_LogoAndTexts(logo: widget.logo)),
         _formPart,
-        SizedBox(
-            height: loginTheme.actionAndChangeActionSpacing ??
-                dynamicSize.height * 2.5),
+        SizedBox(height: loginTheme.actionAndChangeActionSpacing ?? dynamicSize.height * 2.5),
         if (widget.showChangeActionTitle)
           _welcomeAnimationWrapper(
-            _ChangeActionTitle(
-                showButtonText: true, animate: () => _animate(context)),
+            _ChangeActionTitle(showButtonText: true, animate: () => _animate(context)),
           ),
       ];
 
@@ -408,8 +392,7 @@ class __ViewState extends State<_View> with SingleTickerProviderStateMixin {
         animation: welcomeTransitionAnimation,
         child: extChild,
         builder: (BuildContext context, Widget? child) => Transform.translate(
-          offset:
-              Offset(dynamicSize.width * welcomeTransitionAnimation.value, 0),
+          offset: Offset(dynamicSize.width * welcomeTransitionAnimation.value, 0),
           child: child,
         ),
       );
@@ -418,8 +401,7 @@ class __ViewState extends State<_View> with SingleTickerProviderStateMixin {
         animation: animationController,
         child: _webWelcomeChild,
         builder: (BuildContext context, Widget? child) => Transform.translate(
-          offset:
-              Offset(dynamicSize.width * welcomeTransitionAnimation.value, 0),
+          offset: Offset(dynamicSize.width * welcomeTransitionAnimation.value, 0),
           child: child,
         ),
       );
@@ -434,15 +416,13 @@ class __ViewState extends State<_View> with SingleTickerProviderStateMixin {
                   fit: BoxFit.cover,
                 ),
         ),
-        width: dynamicSize.width *
-            (100 - context.read<LoginTheme>().formWidthRatio),
+        width: dynamicSize.width * (100 - context.read<LoginTheme>().formWidthRatio),
         height: dynamicSize.height * 100,
         child: _webWelcomeComponents(context),
       );
 
   Widget _webWelcomeComponents(BuildContext context) => Padding(
-        padding: context.read<LoginTheme>().welcomePadding ??
-            DynamicSize(context).medHighHorizontalPadding,
+        padding: context.read<LoginTheme>().welcomePadding ?? DynamicSize(context).medHighHorizontalPadding,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -490,9 +470,7 @@ class __ViewState extends State<_View> with SingleTickerProviderStateMixin {
     if (formKey.currentState != null) {
       formKey.currentState!.reset();
     }
-    animationController.isCompleted
-        ? animationController.reverse()
-        : animationController.forward();
+    animationController.isCompleted ? animationController.reverse() : animationController.forward();
     Provider.of<Auth>(context, listen: false).switchAuth();
   }
 
@@ -521,8 +499,7 @@ class __ViewState extends State<_View> with SingleTickerProviderStateMixin {
     welcomeTransitionAnimation.addListener(() {
       if (mounted) {
         if (_isLandscape) {
-          auth.setIsReverse(welcomeTransitionAnimation.value <=
-              context.read<LoginTheme>().formWidthRatio / 2);
+          auth.setIsReverse(welcomeTransitionAnimation.value <= context.read<LoginTheme>().formWidthRatio / 2);
         } else if (_forwardCheck) {
           auth.setIsReverse(false);
         } else if (_reverseCheck) {
@@ -532,11 +509,7 @@ class __ViewState extends State<_View> with SingleTickerProviderStateMixin {
     });
   }
 
-  bool get _forwardCheck =>
-      welcomeTransitionAnimation.value > 0 &&
-      welcomeTransitionAnimation.status == AnimationStatus.forward;
+  bool get _forwardCheck => welcomeTransitionAnimation.value > 0 && welcomeTransitionAnimation.status == AnimationStatus.forward;
 
-  bool get _reverseCheck =>
-      welcomeTransitionAnimation.value < 0 &&
-      welcomeTransitionAnimation.status == AnimationStatus.reverse;
+  bool get _reverseCheck => welcomeTransitionAnimation.value < 0 && welcomeTransitionAnimation.status == AnimationStatus.reverse;
 }

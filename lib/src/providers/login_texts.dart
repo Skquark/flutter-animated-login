@@ -27,6 +27,9 @@ class LoginTexts extends ChangeNotifier {
     String? dialogButtonText,
     String? chooseLanguageTitle,
     LanguageOption? selectedLanguage,
+    String? termsAndConditions,
+    String? signUpDisclaimer,
+    List<String>? securityQuestions,
   })  : _welcome = welcome,
         _welcomeDescription = welcomeDescription,
         _signUp = signUp,
@@ -47,6 +50,9 @@ class LoginTexts extends ChangeNotifier {
         _passwordMatchingError = passwordMatchingError,
         _dialogButtonText = dialogButtonText,
         _chooseLanguageTitle = chooseLanguageTitle,
+        _securityQuestions = securityQuestions,
+        _termsAndConditions = termsAndConditions,
+        _signUpDisclaimer = signUpDisclaimer,
         language = selectedLanguage;
 
   /// Welcome title in signUp mode for the informing part.
@@ -57,8 +63,7 @@ class LoginTexts extends ChangeNotifier {
   /// Welcome description in signUp mode for the informing part.
   /// Default value is given in [_defaultWelcomeDescription].
   /// Custom value in the constructor is assigned to [_welcomeDescription].
-  String get welcomeDescription =>
-      _welcomeDescription ?? _defaultWelcomeDescription;
+  String get welcomeDescription => _welcomeDescription ?? _defaultWelcomeDescription;
 
   /// Action button text for sign up mode.
   /// Default value is given in [_defaultSignUp].
@@ -83,8 +88,7 @@ class LoginTexts extends ChangeNotifier {
   /// Welcome description in login mode for the informing part.
   /// Default value is given in [_defaultWelcomeBackDescription].
   /// Custom value in the constructor is assigned to [_welcomeBackDescription].
-  String get welcomeBackDescription =>
-      _welcomeBackDescription ?? _defaultWelcomeBackDescription;
+  String get welcomeBackDescription => _welcomeBackDescription ?? _defaultWelcomeBackDescription;
 
   /// Action button text for login mode.
   /// Default value is given in [_defaultLogin].
@@ -114,8 +118,7 @@ class LoginTexts extends ChangeNotifier {
   /// Text above the login button to direct users who already have an account.
   /// Default value is given in [_defaultAlreadyHaveAnAccount].
   /// Custom value in the constructor is assigned to [_alreadyHaveAnAccount].
-  String get alreadyHaveAnAccount =>
-      _alreadyHaveAnAccount ?? _defaultAlreadyHaveAnAccount;
+  String get alreadyHaveAnAccount => _alreadyHaveAnAccount ?? _defaultAlreadyHaveAnAccount;
 
   /// Hint text for name text form field.
   /// Default value is given in [_defaultNameHint].
@@ -135,14 +138,12 @@ class LoginTexts extends ChangeNotifier {
   /// Hint text for confirm password text form field.
   /// Default value is given in [_defaultConfirmPasswordHint].
   /// Custom value in the constructor is assigned to [_confirmPasswordHint].
-  String get confirmPasswordHint =>
-      _confirmPasswordHint ?? _defaultConfirmPasswordHint;
+  String get confirmPasswordHint => _confirmPasswordHint ?? _defaultConfirmPasswordHint;
 
   /// The error text for not matching password and confirm password inputs.
   /// Default value is given in [_defaultPasswordMatchingError].
   /// Custom value in the constructor is assigned to [_passwordMatchingError].
-  String get passwordMatchingError =>
-      _passwordMatchingError ?? _defaultPasswordMatchingError;
+  String get passwordMatchingError => _passwordMatchingError ?? _defaultPasswordMatchingError;
 
   /// The button text of error dialog.
   /// Default value is given in [_defaultDialogButtonText].
@@ -152,20 +153,25 @@ class LoginTexts extends ChangeNotifier {
   /// The title of choose language dialog.
   /// Default value is given in [_defaultChooseLanguageTitle].
   /// Custom value in the constructor is assigned to [_chooseLanguageTitle].
-  String get chooseLanguageTitle =>
-      _chooseLanguageTitle ?? _defaultChooseLanguageTitle;
+  String get chooseLanguageTitle => _chooseLanguageTitle ?? _defaultChooseLanguageTitle;
+
+  /// List of Security Questions to answer.
+  List<String>? securityQuestions;
+
+  /// Long text of Terms and Conditions dialog.
+  String? termsAndConditions;
+
+  /// Disclaimer text at the end of Signup form.
+  String? signUpDisclaimer;
 
   static const String _defaultWelcome = 'Welcome!';
-  static const String _defaultWelcomeDescription =
-      'You are where you find the best you are looking for!';
+  static const String _defaultWelcomeDescription = 'You are where you find the best you are looking for!';
   static const String _defaultSignUp = 'Sign Up';
   static const String _defaultSignUpFormTitle = 'Create an Account';
-  static const String _defaultSignUpUseEmail =
-      'or use your email for registration:';
+  static const String _defaultSignUpUseEmail = 'or use your email for registration:';
   static const String _defaultnotHaveAnAccount = "Not have an account?";
   static const String _defaultWelcomeBack = 'Welcome Back!';
-  static const String _defaultWelcomeBackDescription =
-      "Welcome back to the best. We're always here, waiting for you!";
+  static const String _defaultWelcomeBackDescription = "Welcome back to the best. We're always here, waiting for you!";
   static const String _defaultLogin = 'Login';
   static const String _defaultLoginFormTitle = 'Login to Account';
   static const String _defaultLoginUseEmail = 'or use your email account:';
@@ -177,8 +183,7 @@ class LoginTexts extends ChangeNotifier {
   static const String _defaultPasswordHint = 'Password';
   static const String _defaultConfirmPasswordHint = 'Confirm Password';
 
-  static const String _defaultPasswordMatchingError =
-      'The passwords you entered do not match, check again.';
+  static const String _defaultPasswordMatchingError = 'The passwords you entered do not match, check again.';
   static const String _defaultDialogButtonText = 'OK';
   static const String _defaultChooseLanguageTitle = 'Choose your language';
 
@@ -242,6 +247,14 @@ class LoginTexts extends ChangeNotifier {
 
   /// The text for button in the error dialog.
   final String? _dialogButtonText;
+
+  /// List of Security Questions to answer
+  final List<String>? _securityQuestions;
+
+  final String? _termsAndConditions;
+
+  /// Disclaimer text at the end of Signup form.
+  final String? _signUpDisclaimer;
 
   /// The title for choose language dialog.
   final String? _chooseLanguageTitle;

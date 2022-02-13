@@ -102,6 +102,10 @@ class __FormPartState extends State<_FormPart> {
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
   late final TextEditingController _confirmPasswordController;
+  late final TextEditingController _firstNameController;
+  late final TextEditingController _lastNameController;
+  late final TextEditingController _companyController;
+  late final TextEditingController _securityAnswerController;
 
   /// The form key that will be assigned to the form.
   late final GlobalKey<FormState> _formKey = widget.formKey;
@@ -123,14 +127,14 @@ class __FormPartState extends State<_FormPart> {
     ).tweenSequenceAnimation(80, 10);
 
     final Auth readAuth = context.read<Auth>();
-    _nameController =
-        widget.nameController ?? TextEditingController(text: readAuth.username);
-    _emailController =
-        widget.emailController ?? TextEditingController(text: readAuth.email);
-    _passwordController = widget.passwordController ??
-        TextEditingController(text: readAuth.password);
-    _confirmPasswordController = widget.confirmPasswordController ??
-        TextEditingController(text: readAuth.confirmPassword);
+    _nameController = widget.nameController ?? TextEditingController(text: readAuth.username);
+    _emailController = widget.emailController ?? TextEditingController(text: readAuth.email);
+    _passwordController = widget.passwordController ?? TextEditingController(text: readAuth.password);
+    _confirmPasswordController = widget.confirmPasswordController ?? TextEditingController(text: readAuth.confirmPassword);
+    _firstNameController = TextEditingController(text: readAuth.firstName);
+    _lastNameController = TextEditingController(text: readAuth.lastName);
+    _companyController = TextEditingController(text: readAuth.companyName);
+    _securityAnswerController = TextEditingController(text: readAuth.securityAnswer);
   }
 
   @override
@@ -147,6 +151,10 @@ class __FormPartState extends State<_FormPart> {
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     _confirmPasswordFocus.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _companyController.dispose();
+    _securityAnswerController.dispose();
     super.dispose();
   }
 
@@ -166,8 +174,7 @@ class __FormPartState extends State<_FormPart> {
         : AnimatedBuilder(
             animation: transitionAnimation,
             child: _formColumn,
-            builder: (BuildContext context, Widget? child) =>
-                Transform.translate(
+            builder: (BuildContext context, Widget? child) => Transform.translate(
               offset: Offset(dynamicSize.width * transitionAnimation.value, 0),
               child: child,
             ),
@@ -198,10 +205,7 @@ class __FormPartState extends State<_FormPart> {
       );
 
   Widget get _formColumn => Padding(
-        padding: loginTheme.formPadding ??
-            (_isLandscape
-                ? dynamicSize.highHorizontalPadding
-                : dynamicSize.lowMedHorizontalPadding),
+        padding: loginTheme.formPadding ?? (_isLandscape ? dynamicSize.highHorizontalPadding : dynamicSize.lowMedHorizontalPadding),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -210,9 +214,7 @@ class __FormPartState extends State<_FormPart> {
               ..._socialLoginPart
             else
               SizedBox(
-                height:
-                  (loginTheme.spacingWithoutSocial != null && loginTheme.spacingWithoutSocial!.compareTo(0) > 0
-                         ? loginTheme.spacingWithoutSocial : dynamicSize.height * 2),
+                height: (loginTheme.spacingWithoutSocial != null && loginTheme.spacingWithoutSocial!.compareTo(0) > 0 ? loginTheme.spacingWithoutSocial : dynamicSize.height * 2),
               ),
             _form,
             SizedBox(height: loginTheme.spacingFormAndAction ?? _customSpace),
@@ -241,24 +243,18 @@ class __FormPartState extends State<_FormPart> {
 
   Widget get _formTitle => BaseText(
         _isReverse ? loginTexts.loginFormTitle : loginTexts.signUpFormTitle,
-        style: TextStyles(context)
-            .titleStyle(color: _isLandscape ? null : Colors.white)
-            .merge(loginTheme.formTitleStyle),
+        style: TextStyles(context).titleStyle(color: _isLandscape ? null : Colors.white).merge(loginTheme.formTitleStyle),
       );
 
   Widget get _socialLoginOptions => Wrap(
-        spacing: context.read<LoginTheme>().socialLoginsSpacing ??
-            dynamicSize.responsiveSize * 10,
+        spacing: context.read<LoginTheme>().socialLoginsSpacing ?? dynamicSize.responsiveSize * 10,
         alignment: WrapAlignment.center,
         children: _socialLoginButtons,
       );
 
   Widget get _useEmailText => BaseText(
         _isReverse ? loginTexts.loginUseEmail : loginTexts.signUpUseEmail,
-        style: TextStyles(context)
-            .subtitleTextStyle(
-                color: _isLandscape ? Colors.black87 : Colors.white)
-            .merge(loginTheme.useEmailStyle),
+        style: TextStyles(context).subtitleTextStyle(color: _isLandscape ? Colors.black87 : Colors.white).merge(loginTheme.useEmailStyle),
       );
 
   List<Widget> get _socialLoginButtons => List<Widget>.generate(
@@ -282,8 +278,7 @@ class __FormPartState extends State<_FormPart> {
   Widget get _actionButton => RoundedButton(
         buttonText: _isReverse ? loginTexts.login : loginTexts.signUp,
         onPressed: _action,
-        backgroundColor:
-            _isLandscape ? theme.primaryColor.withOpacity(.8) : Colors.white,
+        backgroundColor: _isLandscape ? theme.primaryColor.withOpacity(.8) : Colors.white,
         buttonStyle: loginTheme.actionButtonStyle,
       );
 
@@ -320,10 +315,18 @@ class __FormPartState extends State<_FormPart> {
       email: _emailController.text,
       password: _passwordController.text,
       confirmPassword: _confirmPasswordController.text,
+      firstName: _firstNameController.text,
+      lastName: _lastNameController.text,
+      companyName: _companyController.text,
+      securityQuestion: auth.securityQuestion,
+      securityAnswer: _securityAnswerController.text,
+      profileType: auth.profileType,
+      agreeToTerms: auth.agreeToTerms,
     );
-    if (signupData.password != signupData.confirmPassword &&
-        widget.checkError &&
-        widget.signUpMode != SignUpModes.name) {
+    if (loginTexts.termsAndConditions != null && !auth.agreeToTerms) {
+      return "You must Agree to the Terms and Conditions";
+    }
+    if (signupData.password != signupData.confirmPassword && widget.checkError && widget.signUpMode != SignUpModes.name) {
       return loginTexts.passwordMatchingError;
     } else {
       return auth.onSignup(signupData);
@@ -336,13 +339,52 @@ class __FormPartState extends State<_FormPart> {
           direction: Axis.vertical,
           alignment: WrapAlignment.center,
           crossAxisAlignment: WrapCrossAlignment.center,
-          spacing: context.read<LoginTheme>().formElementsSpacing ??
-              dynamicSize.height * (_isLandscape ? 2.2 : 1.5),
+          spacing: context.read<LoginTheme>().formElementsSpacing ?? dynamicSize.height * (_isLandscape ? 2.2 : 1.5),
           children: _formElements,
         ),
       );
 
   List<Widget> get _formElements => <Widget>[
+        DropdownButton<ProfileType>(
+          hint: Text("Profile Type"),
+          items: [DropdownMenuItem(value: ProfileType.Personal, child: Text("Personal")), DropdownMenuItem(value: ProfileType.Corporate, child: Text("Corporate"))],
+          onChanged: (v) => setState(() => auth.profileType = v!),
+          isExpanded: true,
+        ),
+        if (auth.profileType == ProfileType.Corporate)
+          CustomTextFormField(
+            controller: _companyController,
+            hintText: "Company Name",
+            prefixIcon: Icons.business,
+            //prefixWidget: loginTheme.emailIcon,
+            validator: _nameValidator,
+            textInputAction: TextInputAction.next,
+            onChanged: (String? v) => auth.companyName = v,
+            autofillHints: const <String>[AutofillHints.organizationName],
+            textInputType: TextInputType.name,
+          ),
+        CustomTextFormField(
+          controller: _firstNameController,
+          hintText: "First Name",
+          prefixIcon: Icons.person_outline,
+          //prefixWidget: loginTheme.emailIcon,
+          validator: _nameValidator,
+          textInputAction: TextInputAction.next,
+          onChanged: (v) => auth.firstName = v,
+          autofillHints: const <String>[AutofillHints.givenName],
+          textInputType: TextInputType.name,
+        ),
+        CustomTextFormField(
+          controller: _lastNameController,
+          hintText: "Last Name",
+          prefixIcon: Icons.person_outline,
+          //prefixWidget: loginTheme.emailIcon,
+          validator: _nameValidator,
+          textInputAction: TextInputAction.next,
+          onChanged: (String? v) => auth.lastName = v,
+          autofillHints: const <String>[AutofillHints.familyName],
+          textInputType: TextInputType.name,
+        ),
         if (!_isReverse && widget.signUpMode != SignUpModes.confirmPassword)
           CustomTextFormField(
             controller: _nameController,
@@ -375,10 +417,8 @@ class __FormPartState extends State<_FormPart> {
           hintText: loginTexts.passwordHint,
           prefixIcon: Icons.password_outlined,
           showPasswordVisibility: widget.showPasswordVisibility,
-          textInputAction:
-              auth.isSignup ? TextInputAction.next : TextInputAction.done,
-          onFieldSubmitted: (_) =>
-              auth.isSignup ? _confirmPasswordFocus.requestFocus() : _action(),
+          textInputAction: auth.isSignup ? TextInputAction.next : TextInputAction.done,
+          onFieldSubmitted: (_) => auth.isSignup ? _confirmPasswordFocus.requestFocus() : _action(),
           onChanged: auth.setPassword,
           validator: _passwordValidator,
         ),
@@ -394,17 +434,55 @@ class __FormPartState extends State<_FormPart> {
             validator: _passwordValidator,
           ),
         if (_isReverse && widget.showForgotPassword) _forgotPassword,
+        if (loginTexts.securityQuestions != null) ...[
+          DropdownButton<String>(
+              hint: Text("Security Question"),
+              value: auth.securityQuestion,
+              isExpanded: true,
+              items: loginTexts.securityQuestions!
+                  .map((e) => DropdownMenuItem(
+                        child: Text(e),
+                        value: auth.securityQuestion,
+                      ))
+                  .toList(),
+              onChanged: (v) => setState(() => auth.securityQuestion = v)),
+          CustomTextFormField(
+            controller: _securityAnswerController,
+            hintText: "Answer",
+            prefixIcon: Icons.security_outlined,
+            //prefixWidget: loginTheme.emailIcon,
+            //validator: _emailValidator,
+            textInputAction: TextInputAction.next,
+            onChanged: (String? v) => auth.securityAnswer = v,
+            autofillHints: const <String>[AutofillHints.name],
+            textInputType: TextInputType.text,
+          ),
+        ],
+        if (loginTexts.termsAndConditions != null)
+          CheckboxListTile(
+              value: auth.agreeToTerms,
+              onChanged: (v) => setState(() => auth.agreeToTerms = v ?? false),
+              controlAffinity: ListTileControlAffinity.leading,
+              title: Row(children: [
+                Text("Agree to "),
+                GestureDetector(
+                    onTap: () => AnimatedDialog(
+                            contentText: loginTexts.termsAndConditions!,
+                            title: Text("Terms and Conditions", style: TextStyle(fontWeight: FontWeight.bold)),
+                            action: () async {
+                              setState(() => auth.agreeToTerms = true);
+                              Navigator.of(context).pop();
+                            },
+                            actionText: "Agree")
+                        .show(context),
+                    child: Text("Terms and Conditions", style: TextStyle(decoration: TextDecoration.underline))),
+              ])),
+        if (loginTexts.signUpDisclaimer != null) Text(loginTexts.signUpDisclaimer!, style: TextStyle(fontWeight: FontWeight.bold)),
       ];
 
-  FormFieldValidator<String?>? get _nameValidator => widget.validateName
-      ? (widget.nameValidator?.customValidator ??
-          Validators(validator: widget.nameValidator).name)
-      : null;
+  FormFieldValidator<String?>? get _nameValidator => widget.validateName ? (widget.nameValidator?.customValidator ?? Validators(validator: widget.nameValidator).name) : null;
 
-  FormFieldValidator<String?>? get _emailValidator => widget.validateEmail
-      ? (widget.emailValidator?.customValidator ??
-          Validators(validator: widget.emailValidator).email)
-      : null;
+  FormFieldValidator<String?>? get _emailValidator => widget.validateEmail ? (widget.emailValidator?.customValidator ?? Validators(validator: widget.emailValidator).email) : null;
 
   FormFieldValidator<String?>? get _passwordValidator => widget.validatePassword
       ? (widget.passwordValidator?.customValidator ??
@@ -421,26 +499,19 @@ class __FormPartState extends State<_FormPart> {
 
   Widget get _forgotPassword => Container(
         alignment: _isLandscape ? Alignment.center : Alignment.topCenter,
-        padding: loginTheme.forgotPasswordPadding ??
-            (_isLandscape
-                ? dynamicSize.lowTopPadding
-                : dynamicSize.lowMedBottomPadding),
+        padding: loginTheme.forgotPasswordPadding ?? (_isLandscape ? dynamicSize.lowTopPadding : dynamicSize.lowMedBottomPadding),
         child: BaseTextButton(
           text: loginTexts.forgotPassword,
-          style: _defaultStyle
-              .copyWith(decoration: TextDecoration.underline)
-              .merge(loginTheme.forgotPasswordStyle),
+          style: _defaultStyle.copyWith(decoration: TextDecoration.underline).merge(loginTheme.forgotPasswordStyle),
           onPressed: () async {
             await _errorCheck(_forgotPasswordResult);
           },
         ),
       );
 
-  TextStyle get _defaultStyle => TextStyles(context)
-      .subBodyStyle(color: _isLandscape ? theme.primaryColor : Colors.white);
+  TextStyle get _defaultStyle => TextStyles(context).subBodyStyle(color: _isLandscape ? theme.primaryColor : Colors.white);
 
-  Future<String?> _forgotPasswordResult() async =>
-      auth.onForgotPassword(_emailController.text);
+  Future<String?> _forgotPasswordResult() async => auth.onForgotPassword(_emailController.text);
 
   void _initializeAnimations() {
     /// Initializes the transition animation from welcome part's width ratio
@@ -462,7 +533,10 @@ class __FormPartState extends State<_FormPart> {
     _emailController.value = TextEditingValue(text: auth.email ?? '');
     _nameController.value = TextEditingValue(text: auth.username ?? '');
     _passwordController.value = TextEditingValue(text: auth.password ?? '');
-    _confirmPasswordController.value =
-        TextEditingValue(text: auth.confirmPassword ?? '');
+    _confirmPasswordController.value = TextEditingValue(text: auth.confirmPassword ?? '');
+    _firstNameController.value = TextEditingValue(text: auth.firstName ?? '');
+    _lastNameController.value = TextEditingValue(text: auth.lastName ?? '');
+    _companyController.value = TextEditingValue(text: auth.companyName ?? '');
+    _securityAnswerController.value = TextEditingValue(text: auth.securityAnswer ?? '');
   }
 }
