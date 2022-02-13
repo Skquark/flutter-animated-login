@@ -216,7 +216,7 @@ class _AnimatedLoginState extends State<AnimatedLogin> {
 
   Widget get _safeArea => SafeArea(
         child: SizedBox(
-          width: context.size?.width ?? MediaQuery.of(context).size.width,
+          width: double.infinity,
           child: _View(
             formKey: widget.formKey,
             checkError: widget.checkError,
